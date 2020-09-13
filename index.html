@@ -1,0 +1,187 @@
+<!DOCTYPE>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" href="./css/001.css">
+	</head>
+	<body>
+		<div class="t">
+			<div class="t1">
+				<h2 class="t2">Todolist</h2>
+				<input type="text" class="t3" placeholder="add.."/>
+			</div>
+		</div>
+	<div class="k">
+		<h2>正在进行  <span class="todocount">0</span></h2>
+		<ol id="todolist">
+		</ol>
+		<h2>已经完成  <span class="donecount">0</span></h2>
+		<ul id="donelist">
+		</ul>
+    </div>
+	<div id="clear">全部清除</div>
+	 
+	 <script>
+		  const todolist=document.getElementById("todolist");
+		  const todocount=document.getElementsByClassName("todocount")[0];
+		  const donelist=document.getElementById("donelist");
+		  const donecount=document.getElementsByClassName("donecount")[0];
+          const input=document.getElementsByClassName("t3")[0];
+	      const clear=document.getElementById("clear");
+		  const div=document.getElementsByClassName("k")[0];
+	//计数器
+		 function  x(t,y){ 
+		   var a=t.childElementCount;
+		    y.innerHTML=a;
+	 }
+	 x(todolist,todocount);
+	 x(donelist,donecount);
+	 var toDoList;
+	 if(localStorage.toDoList=="null")
+	 {
+		 toDoList=[];
+	 }
+	 else{
+		 toDoList=JSON.parse(localStorage.getItem("toDoList"));
+	 }
+	 
+       var i=0;
+	//获取输入框信息
+	input.onkeydown=function (ev){
+		if(ev.keyCode==13)
+		{
+			if(input.value=="")
+			{
+				alert("请输入内容!");
+			}
+			else
+			{
+				var value=input.value;
+				var Item={
+					content:value,
+					isdone:false
+				};
+				toDoList.push(Item);
+				
+				add(toDoList);
+				// add(todolist,input.value);
+				x(todolist,todocount);
+				x(donelist,donecount);
+			}
+		}
+		input.value="";
+	}  
+	//添加li
+	// function add(toDoList,str)
+	function  add(toDoList)
+	{
+		localStorage.setItem("toDoList",JSON.stringify(toDoList));
+	     if(!toDoList)
+		 {
+			 return;
+		 }
+		todolist.innerHTML="";
+		donelist.innerHTML="";
+		toDoList.forEach(function(item,index){
+		var li=document.createElement("li");
+	     li.setAttribute("class","sli");
+		if(item.isdone){
+			li.innerHTML=`
+			<input type="checkbox" class="kkk" checked="checked" data-index="${index}">
+			`+item.content+`
+			<a class="del" data-index="${index}"></a>`;
+			donelist.appendChild(li);
+		     
+		}else{
+			li.innerHTML=`
+			<input type="checkbox" class="kkk" data-index="${index}">
+			`+item.content+`	
+			<a class="del" data-index="${index}"></a>`;
+			todolist.appendChild(li);
+			
+		}
+		
+		
+		/* var  input1=document.createElement("input");
+		var a=document.createElement("a");
+		let text=document.createTextNode(item.content);
+		li.appendChild(input1);
+		li.appendChild(text);
+		li.appendChild(a);
+		li.className="sli"
+		input1.type="checkbox";
+		input1.className="kkk";
+		input1.setAttribute("data-index","${index}");
+		a.setAttribute("data-index","${index}");
+		// input1.addEventListener("click",todown,false);
+  //       a.addEventListener("click",del,false);
+		if(item.isdone=="true")
+		{
+		      donelist.insertBefore(li,donelist.firstChild);
+		}
+		else{
+			todolist.insertBefore(li,todolist.firstChild);
+			
+		} */
+		});
+		x(todolist,todocount);
+		x(donelist,donecount);
+	}
+	add(toDoList);
+	 //删除
+	 div.onclick=function(ev){
+		 if(ev.target.tagName=="A")
+		 {
+		     var index=parseInt(ev.target.dataset.index);
+		     toDoList.splice(index,1);
+		     add(toDoList);
+		 }
+	 };
+	 //当改变正在进行的列表，某一项状态时
+	 todolist.onclick=function(event){
+		 var index=parseInt(event.target.dataset.index);
+		 toDoList[index].isdone=true;
+		 add(toDoList);
+	 }
+	 //当改变已完成的列表，某项状态时
+	 donelist.onchange=function(event){
+		var index=parseInt(event.target.dataset.index);
+		 toDoList[index].isdone=false;
+		 add(toDoList);
+	 }
+	 
+	 
+	 
+	 
+	 // function del(){
+		 
+		//  this.parentElement.parentElement.removeChild(this.parentElement);
+		//  x(todolist,todocount);
+		//  x(donelist,donecount);
+	 // }
+	 // function todown(){
+		//  this.removeEventListener("click",todown,false);
+		//  this.addEventListener("click",toup,false);
+		//  donelist.insertBefore(this.parentNode,null);
+		//  x(todolist,todocount);
+		//  x(donelist,donecount);
+	 // }
+	 // function toup(){
+		//  this.removeEventListener("click",toup,false);
+		//  this.addEventListener("click",todown,false);
+		//  todolist.insertBefore(this.parentElement,null);
+		//  x(todolist,todocount);
+		//  x(donelist,donecount);
+	 // } 
+	 //一次清除
+	 clear.onclick=function (){
+		 localStorage.clear();
+		 todolist.innerHTML="";
+		 donelist.innerHTML="";
+		 x(todolist,todocount);
+		 x(donelist,donecount);
+	 } 
+	 </script>
+	</body>
+</html>
